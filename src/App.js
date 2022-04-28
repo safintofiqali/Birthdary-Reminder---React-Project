@@ -1,25 +1,43 @@
-import logo from './logo.svg';
-import './App.css';
+import { useEffect, useState } from "react";
+import birthdaysData from "./data";
+import "./App.css";
+import List from "./components/list/List.comp";
+import Pagination from "./components/pagination/Pagination.comp";
 
-function App() {
+const App = () => {
+  const clearAllBirthdays = () => {
+    setBirthdays([]);
+  };
+
+  const changePageNumber = (pageNumber) => {
+    setPage(pageNumber);
+  };
+
+  const [birthdays, setBirthdays] = useState(birthdaysData);
+  const [page, setPage] = useState(1);
+  const articlePerPage = 3;
+  const indexOfLastItem = page * articlePerPage;
+  const indexOfFirstItem = indexOfLastItem - articlePerPage;
+
+  useEffect(() => {
+    let birthdaysArray = birthdaysData.slice(indexOfFirstItem, indexOfLastItem);
+    setBirthdays(birthdaysArray);
+  }, [page]);
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <main>
+      <section className="container">
+        <h3>{birthdays.length} Birthdays today</h3>
+        <List birthdays={birthdays} />
+        <Pagination
+          paginate={changePageNumber}
+          articlesPerPage={articlePerPage}
+          articles={birthdaysData.length}
+        />
+        <button onClick={clearAllBirthdays}>Clear All</button>
+      </section>
+    </main>
   );
-}
+};
 
 export default App;
